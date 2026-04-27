@@ -11,14 +11,41 @@ export default function AdminStores() {
     const [loading, setLoading] = useState(true)
 
     const fetchStores = async () => {
-        setStores(storesDummyData)
-        setLoading(false)
+    const savedStores =
+        JSON.parse(localStorage.getItem("stores"));
+
+    if (savedStores && savedStores.length > 0) {
+        setStores(savedStores);
+    } else {
+        setStores(storesDummyData);
+        localStorage.setItem(
+            "stores",
+            JSON.stringify(storesDummyData)
+        );
     }
+
+    setLoading(false);
+}
 
     const toggleIsActive = async (storeId) => {
-        // Logic to toggle the status of a store
+    const updatedStores = stores.map((store) =>
+        store.id === storeId
+            ? {
+                ...store,
+                isActive: !store.isActive
+            }
+            : store
+    );
 
-    }
+    setStores(updatedStores);
+
+    localStorage.setItem(
+        "stores",
+        JSON.stringify(updatedStores)
+    );
+
+    toast.success("Store status updated successfully");
+}
 
     useEffect(() => {
         fetchStores()
